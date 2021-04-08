@@ -35,6 +35,7 @@ module 'role-gcc' {
 | max\_session\_duration | maximum duration in seconds for role, between 1 to 12 hours | `number` | `3600` | no |
 | name | name of the role in aws console | `string` | n/a | yes |
 | path | path of the role in aws console | `string` | `"/"` | no |
+| enable\_gcci\_boundary | permission boundary toggle | `bool` | `true` | no |
 
 ## Outputs
 
