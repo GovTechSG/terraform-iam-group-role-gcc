@@ -27,11 +27,6 @@ data "aws_iam_policy_document" "iam_trusted" {
         "true",
       ]
     }
-    condition {
-      test = "NumericLessThan"
-      variable = "aws:MultiFactorAuthAge"
-      values = [ "3600" ]
-    }
   }
 }
 
