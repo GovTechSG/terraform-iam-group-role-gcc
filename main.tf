@@ -46,9 +46,9 @@ resource "aws_iam_role" "iam_role" {
   name                  = var.name
   path                  = var.path
   description           = var.description
-  permissions_boundary  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/GCCIAccountBoundary"
+  permissions_boundary  = var.enable_gcci_boundary ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/GCCIAccountBoundary" : ""
   assume_role_policy    = data.aws_iam_policy_document.iam_trusted.json
-  max_session_duration = var.max_session_duration
+  max_session_duration  = var.max_session_duration
   force_detach_policies = true
 }
 

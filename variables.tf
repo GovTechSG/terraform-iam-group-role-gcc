@@ -42,3 +42,9 @@ variable "attach_policies" {
   type        = map(string)
   default     = {}
 }
+
+variable "enable_gcci_boundary" {
+  description = "toggle for gcci boundary to allow non-gcc accounts to create role"
+  type        = bool
+  default     = true
+}
