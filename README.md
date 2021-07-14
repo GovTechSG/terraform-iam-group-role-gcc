@@ -9,6 +9,10 @@ module 'role-gcc' {
     terraformer = "arn:aws:iam::${get_aws_account_id()}:policy/terraformer",
   }
 
+  allowed_roles_to_assume = [
+    "arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME",
+  ]
+
   # Will not create if empty, if need custom policy, use the EOF syntax
   custom_policy = ""
 
@@ -36,6 +40,7 @@ module 'role-gcc' {
 | name | name of the role in aws console | `string` | n/a | yes |
 | path | path of the role in aws console | `string` | `"/"` | no |
 | enable\_gcci\_boundary | permission boundary toggle | `bool` | `true` | no |
+| allowed_roles_to_assume | allowed roles to assume this role | `list(string)` | `[]` | no |
 
 ## Outputs
 
