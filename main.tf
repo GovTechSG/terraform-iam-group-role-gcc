@@ -9,8 +9,9 @@
 data "aws_caller_identity" "current" {}
 
 # ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
-data "aws_iam_policy_document" "iam_trusted" {
+data "aws_iam_policy_document" "trusted_account" {
   statement {
+    sid = "RootAccount"
     actions = ["sts:AssumeRole"]
     principals {
       type = "AWS"
@@ -28,6 +29,25 @@ data "aws_iam_policy_document" "iam_trusted" {
       ]
     }
   }
+}
+
+# ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
+data "aws_iam_policy_document" "trusted_roles" {
+  statement {
+    sid = "TrustedRoles"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type = "AWS"
+      identifiers = var.allowed_roles_to_assume
+    }
+  }
+}
+
+data "aws_iam_policy_document" "iam_trusted" {
+  source_policy_documents = [
+    data.aws_iam_policy_document.trusted_account.json,
+    data.aws_iam_policy_document.trusted_roles.json
+  ]
 }
 
 # ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html

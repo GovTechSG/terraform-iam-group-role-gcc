@@ -8,6 +8,12 @@ variable "description" {
   type        = string
 }
 
+variable "allowed_roles_to_assume" {
+  description = "list of roles arn allowed to assume this role"
+  type        = list(string)
+  default     = []
+}
+
 variable "max_session_duration" {
   description = "maximum duration in seconds for role, between 1 to 12 hours"
   type        = number
