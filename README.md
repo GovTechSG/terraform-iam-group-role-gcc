@@ -41,6 +41,7 @@ module 'role-gcc' {
 | path | path of the role in aws console | `string` | `"/"` | no |
 | enable\_gcci\_boundary | permission boundary toggle | `bool` | `true` | no |
 | allowed_roles_to_assume | allowed roles to assume this role | `list(string)` | `[]` | no |
+| external_id | conditional id for external assume role | `string` | `default` | no |
 
 ## Outputs
 

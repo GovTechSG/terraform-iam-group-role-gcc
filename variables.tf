@@ -14,6 +14,12 @@ variable "allowed_roles_to_assume" {
   default     = []
 }
 
+variable "external_id" {
+  description = "external id condition for assume role"
+  type        = string
+  default     = "default"
+}
+
 variable "max_session_duration" {
   description = "maximum duration in seconds for role, between 1 to 12 hours"
   type        = number
