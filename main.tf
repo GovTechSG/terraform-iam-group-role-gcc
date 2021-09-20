@@ -11,34 +11,16 @@ data "aws_caller_identity" "current" {}
 # ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
 data "aws_iam_policy_document" "trusted_account" {
   statement {
-    sid = "RootAccount"
+    sid = "TrustedAccounts"
     actions = ["sts:AssumeRole"]
     principals {
       type = "AWS"
       # root looks scary but this is just a trust policy so that we can attach the actual
       # policy that allows sts:AssumeRole to be exercised, this alone will not enable anything
       # to assume the role
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
-    }
-    # Only allow role to be assumed if MFA token is present
-    condition {
-      test     = "Bool"
-      variable = "aws:MultiFactorAuthPresent"
-      values = [
-        "true",
-      ]
-    }
-  }
-}
-
-# ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
-data "aws_iam_policy_document" "trusted_roles" {
-  statement {
-    sid = "TrustedRoles"
-    actions = ["sts:AssumeRole"]
-    principals {
-      type = "AWS"
-      identifiers = var.allowed_roles_to_assume
+      identifiers = concat([
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
+      ], var.allowed_roles_to_assume)
     }
     # Only allow role to be assumed if MFA token is present
     condition {
@@ -54,7 +36,6 @@ data "aws_iam_policy_document" "trusted_roles" {
 data "aws_iam_policy_document" "iam_trusted" {
   source_policy_documents = [
     data.aws_iam_policy_document.trusted_account.json,
-    data.aws_iam_policy_document.trusted_roles.json
   ]
 }
 
