@@ -40,6 +40,14 @@ data "aws_iam_policy_document" "trusted_roles" {
       type = "AWS"
       identifiers = var.allowed_roles_to_assume
     }
+    # Only allow role to be assumed if MFA token is present
+    condition {
+      test     = "Bool"
+      variable = "aws:MultiFactorAuthPresent"
+      values = [
+        "true",
+      ]
+    }
   }
 }
 
