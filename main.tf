@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "trusted_account" {
 
 # ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
 data "aws_iam_policy_document" "trusted_roles" {
-  count = length(var.allowed_roles_to_assume) == 0 ? 0 : 1
+  count = length(var.trusted_root_accounts) == 0 ? 0 : 1
   statement {
     sid = "TrustedRoles"
     actions = [
@@ -44,7 +44,7 @@ data "aws_iam_policy_document" "trusted_roles" {
     ]
     principals {
       type = "AWS"
-      identifiers = var.allowed_roles_to_assume
+      identifiers = var.trusted_root_accounts
     }
     # Only allow role to be assumed if MFA token is present
     condition {
@@ -53,6 +53,12 @@ data "aws_iam_policy_document" "trusted_roles" {
       values = [
         var.external_id
       ]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "aws:PrincipalArn"
+      values   = var.trusted_role_arns
     }
   }
 }

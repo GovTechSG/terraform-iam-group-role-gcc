@@ -8,8 +8,14 @@ variable "description" {
   type        = string
 }
 
-variable "allowed_roles_to_assume" {
-  description = "list of roles arn allowed to assume this role"
+variable "trusted_root_accounts" {
+  description = "list of root accounts to assume this role, to be scoped by condition"
+  type        = list(string)
+  default     = []
+}
+
+variable "trusted_role_arns" {
+  description = "list of roles arn allowed to assume this role by condition"
   type        = list(string)
   default     = []
 }

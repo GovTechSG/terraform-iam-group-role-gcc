@@ -9,7 +9,10 @@ module 'role-gcc' {
     terraformer = "arn:aws:iam::${get_aws_account_id()}:policy/terraformer",
   }
 
-  allowed_roles_to_assume = [
+  trusted_root_accounts = [
+    "arn:aws:iam::ACCOUNT_ID:root",
+  ]
+  trusted_role_arns = [
     "arn:aws:iam::ACCOUNT_ID:role/ROLE_NAME",
   ]
 
@@ -40,7 +43,8 @@ module 'role-gcc' {
 | name | name of the role in aws console | `string` | n/a | yes |
 | path | path of the role in aws console | `string` | `"/"` | no |
 | enable\_gcci\_boundary | permission boundary toggle | `bool` | `true` | no |
-| allowed_roles_to_assume | allowed roles to assume this role | `list(string)` | `[]` | no |
+| trusted_root_accounts | allowed accounts to assume this role | `list(string)` | `[]` | no |
+| trusted_role_arns | allowed roles to assume this role | `list(string)` | `[]` | no |
 | external_id | conditional id for external assume role | `string` | `default` | no |
 
 ## Outputs
