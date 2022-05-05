@@ -70,16 +70,16 @@ output "role_session_duration" {
 
 output "custom_policy_arn" {
   description = "ARN of the custom policy"
-  value       = aws_iam_policy.policy[0].arn
+  value       = length(aws_iam_policy.policy) > 0 ? aws_iam_policy.policy[0].arn : null
 }
 
 output "custom_policy_id" {
   description = "id of the custom policy"
-  value       = aws_iam_policy.policy[0].id
+  value       = length(aws_iam_policy.policy) > 0 ? aws_iam_policy.policy[0].id : null
 }
 
 output "custom_policy_name" {
   description = "name of the custom policy"
-  value       = aws_iam_policy.policy[0].name
+  value       = length(aws_iam_policy.policy) > 0 ? aws_iam_policy.policy[0].name : null
 }
 
