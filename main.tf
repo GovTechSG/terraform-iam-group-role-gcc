@@ -1,17 +1,18 @@
 #
 # iam-role
 # --------
-# this module assists in creating an iam role that enables members of groups listed
-# in the `var.group_names` variable to assume it
-#
+# this module assists in creating an iam role that enables Techpass SSO to assume this role
+# techpass users should be created as CLOUD_ASSUME_ROLE
 
 # ref: https://www.terraform.io/docs/providers/aws/d/caller_identity.html
 data "aws_caller_identity" "current" {}
 
 # ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
-data "aws_iam_policy_document" "trusted_account" {
+data "aws_iam_policy_document" "trusted_accounts" {
+  count = length(var.identities)
+
   statement {
-    sid = "TrustedAccounts"
+    sid = "User${count.index}"
     actions = [
     "sts:AssumeRole"]
     principals {
@@ -25,60 +26,20 @@ data "aws_iam_policy_document" "trusted_account" {
     }
     # Only allow role to be assumed if MFA token is present
     condition {
-      test     = "Bool"
-      variable = "aws:MultiFactorAuthPresent"
-      values = [
-        "true",
-      ]
+      test     = "StringEquals"
+      variable = "aws:userid"
+      values   = [format("%s:%s", var.agency_assume_local_role_id, var.identities[count.index].email)]
     }
-  }
-}
-
-# ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
-data "aws_iam_policy_document" "trusted_roles" {
-  count = length(var.trusted_root_accounts) == 0 ? 0 : 1
-  statement {
-    sid = "TrustedRoles"
-    actions = [
-      "sts:AssumeRole"
-    ]
-    principals {
-      type        = "AWS"
-      identifiers = var.trusted_root_accounts
-    }
-    # Only allow role to be assumed if MFA token is present
     condition {
       test     = "StringEquals"
       variable = "sts:ExternalId"
-      values = [
-        var.external_id
-      ]
-    }
-
-    condition {
-      test     = "StringLike"
-      variable = "aws:PrincipalArn"
-      values   = var.trusted_role_arns
+      values   = [var.identities[count.index].email]
     }
   }
 }
 
 data "aws_iam_policy_document" "iam_trusted" {
-  source_policy_documents = compact([
-    data.aws_iam_policy_document.trusted_account.json,
-    length(data.aws_iam_policy_document.trusted_roles) > 0 ? data.aws_iam_policy_document.trusted_roles[0].json : ""
-  ])
-}
-
-# ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
-data "aws_iam_policy_document" "iam_rolling" {
-  statement {
-    actions = [
-      "sts:AssumeRole",
-    ]
-    resources = formatlist("arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/%s", var.group_names)
-    effect    = "Allow"
-  }
+  source_policy_documents = data.aws_iam_policy_document.trusted_accounts[*].json
 }
 
 # ref: https://www.terraform.io/docs/providers/aws/r/iam_role.html
@@ -86,23 +47,9 @@ resource "aws_iam_role" "iam_role" {
   name                  = var.name
   path                  = var.path
   description           = var.description
-  permissions_boundary  = var.enable_gcci_boundary ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/GCCIAccountBoundary" : ""
   assume_role_policy    = data.aws_iam_policy_document.iam_trusted.json
   max_session_duration  = var.max_session_duration
   force_detach_policies = true
-}
-
-# ref: https://www.terraform.io/docs/providers/aws/r/iam_policy.html
-resource "aws_iam_policy" "iam_allowing_group_to_assume_role" {
-  name        = "${var.name}-group-enabler"
-  description = "allows for groups [${join(",", var.group_names)}] to assume role/${var.name}"
-  policy      = data.aws_iam_policy_document.iam_rolling.json
-}
-
-# ref: https://www.terraform.io/docs/providers/aws/r/iam_role_policy_attachment.html
-resource "aws_iam_role_policy_attachment" "iam_grouping" {
-  role       = aws_iam_role.iam_role.name
-  policy_arn = aws_iam_policy.iam_allowing_group_to_assume_role.arn
 }
 
 # Maps the given list of existing policies to the role

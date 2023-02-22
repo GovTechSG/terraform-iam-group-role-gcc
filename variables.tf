@@ -8,34 +8,10 @@ variable "description" {
   type        = string
 }
 
-variable "trusted_root_accounts" {
-  description = "list of root accounts to assume this role, to be scoped by condition"
-  type        = list(string)
-  default     = []
-}
-
-variable "trusted_role_arns" {
-  description = "list of roles arn allowed to assume this role by condition"
-  type        = list(string)
-  default     = []
-}
-
-variable "external_id" {
-  description = "external id condition for assume role"
-  type        = string
-  default     = "default"
-}
-
 variable "max_session_duration" {
   description = "maximum duration in seconds for role, between 1 to 12 hours"
   type        = number
   default     = 3600
-}
-
-variable "group_names" {
-  description = "list of groups that can assume this role"
-  type        = list(string)
-  default     = []
 }
 
 variable "name" {
@@ -61,8 +37,14 @@ variable "attach_policies" {
   default     = {}
 }
 
-variable "enable_gcci_boundary" {
-  description = "toggle for gcci boundary to allow non-gcc accounts to create role"
-  type        = bool
-  default     = true
+variable "identities" {
+  description = "list of users that can assume this role, i put map in case next time we need to add more stuff"
+  type        = list(map(string))
+  default     = [{ "email" = "techpass_user@tech.gov.sg" },{ "email" = "techpass_developer@tech.gov.sg" }]
+}
+
+variable "agency_assume_local_role_id" {
+  description = "your role_id should be the agency_assume_local role_id, use aws iam list-roles to find out, looks like AROA11ZZZZYYYYXXXX123"
+  type        = string
+  default     = ""
 }
