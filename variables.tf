@@ -44,7 +44,7 @@ variable "identities" {
 }
 
 variable "agency_assume_local_role_id" {
-  description = "your role_id should be the agency_assume_local role_id, use aws iam list-roles to find out"
+  description = "your role_id should be the agency_assume_local role_id, use aws iam list-roles to find out, looks like AROA11ZZZZYYYYXXXX123"
   type        = string
-  default     = "AROA11ZZZZYYYYXXXX123"
+  default     = ""
 }
