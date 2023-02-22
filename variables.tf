@@ -38,7 +38,13 @@ variable "attach_policies" {
 }
 
 variable "identities" {
-  description = "list of users that can assume this role"
+  description = "list of users that can assume this role, i put map in case next time we need to add more stuff"
   type        = list(map(string))
-  default     = [{ "email" = "techpass_user@tech.gov.sg", "principal" = "AROA9BAABCD5NSXYZE123" },{ "email" = "techpass_developer@tech.gov.sg", "principal" = "AROA9BAABCD5NSXYZE455" }]
+  default     = [{ "email" = "techpass_user@tech.gov.sg" },{ "email" = "techpass_developer@tech.gov.sg" }]
+}
+
+variable "agency_assume_local_role_id" {
+  description = "your role_id should be the agency_assume_local role_id, use aws iam list-roles to find out"
+  type        = string
+  default     = "AROA9BAABCD5NSXYZE123"
 }

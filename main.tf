@@ -26,14 +26,14 @@ data "aws_iam_policy_document" "trusted_accounts" {
     }
     # Only allow role to be assumed if MFA token is present
     condition {
-      test      = "StringEquals"
-      variable  = "aws:userid"
-      values    = [format("%s:%s",var.identities[count.index].principal,var.identities[count.index].email)]
+      test     = "StringEquals"
+      variable = "aws:userid"
+      values   = [format("%s:%s", var.agency_assume_local_role_id, var.identities[count.index].email)]
     }
     condition {
-      test      = "StringEquals"
-      variable  = "sts:ExternalId"
-      values    = [var.identities[count.index].email]
+      test     = "StringEquals"
+      variable = "sts:ExternalId"
+      values   = [var.identities[count.index].email]
     }
   }
 }
