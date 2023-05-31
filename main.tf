@@ -28,10 +28,15 @@ data "aws_iam_policy_document" "trusted_accounts" {
       variable = "aws:userid"
       values   = formatlist("%s:%s", var.agency_assume_local_role_id, var.techpass_email_addresses)
     }
-    condition {
-      test     = "StringEquals"
-      variable = "sts:ExternalId"
-      values   = [var.external_id]
+
+    dynamic "condition" {
+      for_each = length(var.external_id) > 0 ? [1] : []
+      content {
+        test     = "StringEquals"
+        variable = "sts:ExternalId"
+        values   = [var.external_id]
+      }
+
     }
   }
 }

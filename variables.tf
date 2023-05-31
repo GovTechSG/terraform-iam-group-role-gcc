@@ -17,7 +17,7 @@ variable "max_session_duration" {
 variable "external_id" {
   description = "external id condition for assume role"
   type        = string
-  default     = "default"
+  default     = ""
 }
 
 variable "name" {
