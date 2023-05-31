@@ -23,41 +23,6 @@ output "name" {
   value       = aws_iam_role.iam_role.name
 }
 
-# output "policy" {
-#   description = "policy attached to this role"
-#   value       = aws_iam_policy.iam_allowing_group_to_assume_role.policy
-# }
-
-# output "policy_arn" {
-#   description = "arn of policy attached to this role"
-#   value       = aws_iam_policy.iam_allowing_group_to_assume_role.arn
-# }
-
-# output "policy_description" {
-#   description = "description of policy attached to this role"
-#   value       = aws_iam_policy.iam_allowing_group_to_assume_role.description
-# }
-
-# output "policy_id" {
-#   description = "id of policy attached to this role"
-#   value       = aws_iam_policy.iam_allowing_group_to_assume_role.id
-# }
-
-# output "policy_name" {
-#   description = "name of policy attached to this role"
-#   value       = aws_iam_policy.iam_allowing_group_to_assume_role.name
-# }
-
-# output "policy_path" {
-#   description = "path of policy attached to this role"
-#   value       = aws_iam_policy.iam_allowing_group_to_assume_role.path
-# }
-
-# output "trust_policy" {
-#   description = "trust role policy of this role"
-#   value       = data.aws_iam_policy_document.iam_trusted.json
-# }
-
 output "unique_id" {
   description = "unique id of the role"
   value       = aws_iam_role.iam_role.unique_id

@@ -2,17 +2,15 @@
 # iam-role
 # --------
 # this module assists in creating an iam role that enables Techpass SSO to assume this role
-# techpass users should be created as CLOUD_ASSUME_ROLE
+# techpass users should be provided the CLOUD_ASSUME_ROLE permission in CMP before being added to techpass_email_addresses
 
 # ref: https://www.terraform.io/docs/providers/aws/d/caller_identity.html
 data "aws_caller_identity" "current" {}
 
 # ref: https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
 data "aws_iam_policy_document" "trusted_accounts" {
-  count = length(var.identities)
-
   statement {
-    sid = "User${count.index}"
+    sid = "TrustedAccounts"
     actions = [
     "sts:AssumeRole"]
     principals {
@@ -28,18 +26,18 @@ data "aws_iam_policy_document" "trusted_accounts" {
     condition {
       test     = "StringEquals"
       variable = "aws:userid"
-      values   = [format("%s:%s", var.agency_assume_local_role_id, var.identities[count.index].email)]
+      values   = formatlist("%s:%s", var.agency_assume_local_role_id, var.techpass_email_addresses)
     }
     condition {
       test     = "StringEquals"
       variable = "sts:ExternalId"
-      values   = [var.identities[count.index].email]
+      values   = [var.external_id]
     }
   }
 }
 
 data "aws_iam_policy_document" "iam_trusted" {
-  source_policy_documents = data.aws_iam_policy_document.trusted_accounts[*].json
+  source_policy_documents = [data.aws_iam_policy_document.trusted_accounts.json]
 }
 
 # ref: https://www.terraform.io/docs/providers/aws/r/iam_role.html
