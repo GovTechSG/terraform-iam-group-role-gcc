@@ -14,6 +14,12 @@ variable "max_session_duration" {
   default     = 3600
 }
 
+variable "external_id" {
+  description = "external id condition for assume role"
+  type        = string
+  default     = ""
+}
+
 variable "name" {
   description = "name of the role in aws console"
   type        = string
@@ -37,14 +43,20 @@ variable "attach_policies" {
   default     = {}
 }
 
-variable "identities" {
-  description = "list of users that can assume this role, i put map in case next time we need to add more stuff"
-  type        = list(map(string))
-  default     = [{ "email" = "techpass_user@tech.gov.sg" },{ "email" = "techpass_developer@tech.gov.sg" }]
+variable "techpass_email_addresses" {
+  description = "list of TechPass users' email addresses to allow use of this role"
+  type        = list(string)
+  default     = []
 }
 
 variable "agency_assume_local_role_id" {
-  description = "your role_id should be the agency_assume_local role_id, use aws iam list-roles to find out, looks like AROA11ZZZZYYYYXXXX123"
+  description = "your agency_assume_local role_id, use `aws iam list-roles --query \"Roles[?starts_with(RoleName, 'AWSReservedSSO_agency_assume_local')].[RoleId]\" --output text`"
   type        = string
   default     = ""
+}
+
+variable "ip_addresses" {
+  description = "ip addresses allowed"
+  type        = list(string)
+  default     = []
 }
