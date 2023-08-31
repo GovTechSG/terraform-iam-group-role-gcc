@@ -36,7 +36,15 @@ data "aws_iam_policy_document" "trusted_accounts" {
         variable = "sts:ExternalId"
         values   = [var.external_id]
       }
+    }
 
+    dynamic "condition" {
+      for_each = length(var.ip_addresses) > 0 ? [1] : []
+      content {
+        test     = "IpAddress"
+        variable = "aws:SourceIp"
+        values   = var.ip_addresses
+      }
     }
   }
 }

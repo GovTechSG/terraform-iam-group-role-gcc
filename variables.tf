@@ -52,4 +52,11 @@ variable "techpass_email_addresses" {
 variable "agency_assume_local_role_id" {
   description = "your agency_assume_local role_id, use `aws iam list-roles --query \"Roles[?starts_with(RoleName, 'AWSReservedSSO_agency_assume_local')].[RoleId]\" --output text`"
   type        = string
+  default     = ""
+}
+
+variable "ip_addresses" {
+  description = "ip addresses allowed"
+  type        = list(string)
+  default     = []
 }
